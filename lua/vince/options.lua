@@ -44,6 +44,10 @@ local transparent_editor_groups = {
   'FoldColumn',
   'LineNr',
   'CursorLineNr',
+  'NeoTreeNormal',
+  'NeoTreeNormalNC',
+  'NeoTreeEndOfBuffer',
+  'NeoTreeWinSeparator',
 }
 
 local function apply_transparent_background()
@@ -63,8 +67,6 @@ end
 
 local function apply_opaque_ui_backgrounds()
   copy_background('NormalFloat', {
-    'NeoTreeNormal',
-    'NeoTreeNormalNC',
     'TelescopeNormal',
     'TelescopePromptNormal',
     'TelescopeResultsNormal',
@@ -72,7 +74,6 @@ local function apply_opaque_ui_backgrounds()
   })
 
   copy_background('FloatBorder', {
-    'NeoTreeWinSeparator',
     'TelescopeBorder',
     'TelescopePromptBorder',
     'TelescopeResultsBorder',

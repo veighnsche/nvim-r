@@ -6,12 +6,11 @@ return {
       local lint = require 'lint'
 
       lint.linters_by_ft = {
-        javascript = { 'biomejs' },
-        javascriptreact = { 'biomejs' },
-        json = { 'biomejs' },
+        javascript = { 'oxlint' },
+        javascriptreact = { 'oxlint' },
         python = { 'ruff' },
-        typescript = { 'biomejs' },
-        typescriptreact = { 'biomejs' },
+        typescript = { 'oxlint' },
+        typescriptreact = { 'oxlint' },
       }
 
       local lint_group = vim.api.nvim_create_augroup('vince-lint', { clear = true })

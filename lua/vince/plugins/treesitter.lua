@@ -6,6 +6,9 @@ return {
     config = function()
       local parsers = {
         'bash',
+        'c',
+        'cmake',
+        'cpp',
         'diff',
         'dart',
         'go',
@@ -22,6 +25,8 @@ return {
         'toml',
         'tsx',
         'typescript',
+        'make',
+        'objc',
         'vim',
         'vimdoc',
         'yaml',

@@ -72,7 +72,16 @@ return {
       local servers = {
         bashls = {},
         basedpyright = {},
-        clangd = {},
+        clangd = {
+          cmd = {
+            'clangd',
+            '--background-index',
+            '--clang-tidy',
+            '--completion-style=detailed',
+            '--header-insertion=iwyu',
+          },
+          filetypes = { 'c', 'cpp', 'objc', 'objcpp', 'cuda', 'proto' },
+        },
         gopls = {},
         jsonls = {},
         lua_ls = {

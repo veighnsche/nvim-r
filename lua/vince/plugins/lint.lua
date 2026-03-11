@@ -6,8 +6,11 @@ return {
       local lint = require 'lint'
 
       lint.linters_by_ft = {
+        c = { 'cppcheck' },
+        cpp = { 'cppcheck' },
         javascript = { 'oxlint' },
         javascriptreact = { 'oxlint' },
+        objc = { 'cppcheck' },
         python = { 'ruff' },
         typescript = { 'oxlint' },
         typescriptreact = { 'oxlint' },

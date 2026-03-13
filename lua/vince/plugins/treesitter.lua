@@ -6,6 +6,9 @@ return {
 		config = function()
 			local bootstrap = require("vince.bootstrap")
 			local treesitter = require("nvim-treesitter")
+			-- Rhai is close enough to Rust for tree-sitter highlighting and indentation,
+			-- but it keeps a distinct filetype so Rust-only tooling does not attach.
+			vim.treesitter.language.register("rust", "rhai")
 			treesitter.setup()
 
 			local configured = {}

@@ -12,9 +12,24 @@ local function sorted_keys(tbl)
 	return keys
 end
 
-local function is_mason_executable(executable)
-	local path = vim.fn.exepath(executable)
-	return path ~= "" and path:find("/mason/bin/", 1, true) ~= nil
+local function resolve_server_command(name, config, binary)
+	local executable = vim.fn.exepath(binary)
+	if executable == "" then
+		return config
+	end
+
+	local resolved = vim.deepcopy(config)
+	local default = vim.lsp.config[name]
+	local cmd = vim.deepcopy(resolved.cmd or (default and default.cmd or nil))
+
+	if type(cmd) == "table" and type(cmd[1]) == "string" then
+		cmd[1] = executable
+		resolved.cmd = cmd
+	else
+		resolved.cmd = { executable }
+	end
+
+	return resolved
 end
 
 return {
@@ -140,7 +155,7 @@ return {
 			}
 
 			-- Pinned Mason versions make first-time bootstrap more repeatable across machines.
-			-- SDK-owned or unsupported tools still come from the system: cppcheck, dart, gofmt, zig.
+			-- Bootstrapped or SDK-owned tools still come from outside Mason: cppcheck, dart, gofmt, zig, marksman.
 			local mason_packages = {
 				{ "bash-language-server", version = "5.6.0" },
 				{ "basedpyright", version = "1.38.2" },
@@ -148,7 +163,6 @@ return {
 				{ "gopls", version = "v0.21.1" },
 				{ "json-lsp", version = "4.10.0" },
 				{ "lua-language-server", version = "3.17.1" },
-				{ "marksman", version = "2026-02-08" },
 				{
 					"nil",
 					version = "2025-06-13",
@@ -188,12 +202,27 @@ return {
 
 			require("mason").setup()
 
-			for name, config in pairs(servers) do
-				vim.lsp.config(name, config)
+			local function configure_servers()
+				for name, config in pairs(servers) do
+					local resolved = config
+					local binary = server_binaries[name]
+					if binary then
+						resolved = resolve_server_command(name, config, binary)
+					end
+					vim.lsp.config(name, resolved)
+				end
 			end
 
+			local function enable_configured_servers()
+				for _, name in ipairs(sorted_keys(servers)) do
+					vim.lsp.enable(name)
+				end
+			end
+
+			configure_servers()
+
 			require("mason-lspconfig").setup({
-				automatic_enable = true,
+				automatic_enable = false,
 			})
 
 			require("mason-tool-installer").setup({
@@ -203,11 +232,16 @@ return {
 				debounce_hours = 12,
 			})
 
-			for name, binary in pairs(server_binaries) do
-				if vim.fn.executable(binary) == 1 and not is_mason_executable(binary) then
-					vim.lsp.enable(name)
-				end
-			end
+			enable_configured_servers()
+
+			vim.api.nvim_create_autocmd("User", {
+				group = vim.api.nvim_create_augroup("vince-mason-enable-lsp", { clear = true }),
+				pattern = "MasonToolsUpdateCompleted",
+				callback = function()
+					configure_servers()
+					enable_configured_servers()
+				end,
+			})
 		end,
 	},
 }

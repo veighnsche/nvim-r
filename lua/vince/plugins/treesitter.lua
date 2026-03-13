@@ -2,7 +2,6 @@ return {
   {
     'nvim-treesitter/nvim-treesitter',
     lazy = false,
-    build = ':TSUpdate',
     config = function()
       local parsers = {
         'bash',
@@ -20,7 +19,6 @@ return {
         'markdown',
         'markdown_inline',
         'python',
-        'query',
         'rust',
         'toml',
         'tsx',
@@ -33,7 +31,12 @@ return {
         'zig',
       }
 
-      require('nvim-treesitter').install(parsers)
+      require('nvim-treesitter').setup {
+        ensure_installed = parsers,
+        auto_install = false,
+        highlight = { enable = true },
+        indent = { enable = true },
+      }
 
       vim.api.nvim_create_autocmd('FileType', {
         group = vim.api.nvim_create_augroup('vince-treesitter-start', { clear = true }),

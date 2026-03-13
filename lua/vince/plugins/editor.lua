@@ -7,6 +7,32 @@ return {
   {
     'lewis6991/gitsigns.nvim',
     event = { 'BufReadPre', 'BufNewFile' },
+    keys = {
+      {
+        ']h',
+        function()
+          if vim.wo.diff then
+            vim.cmd.normal { ']c', bang = true }
+            return
+          end
+
+          require('gitsigns').nav_hunk 'next'
+        end,
+        desc = 'Next changed hunk',
+      },
+      {
+        '[h',
+        function()
+          if vim.wo.diff then
+            vim.cmd.normal { '[c', bang = true }
+            return
+          end
+
+          require('gitsigns').nav_hunk 'prev'
+        end,
+        desc = 'Previous changed hunk',
+      },
+    },
     opts = {
       signs = {
         add = { text = '+' },
